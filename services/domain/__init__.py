@@ -1,3 +1,3 @@
-from . import base
+from . import base, exceptions
 
-__all__ = ["base"]
+__all__ = ["base", "exceptions"]
