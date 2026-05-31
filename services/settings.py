@@ -5,7 +5,7 @@ from zenml.client import Client
 
 
 class Settings(BaseSettings):
-    config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
     # --- settings even when working locally. ---
 
@@ -18,6 +18,13 @@ class Settings(BaseSettings):
 
     # HuggingFace
     HUGGINGFACE_ACCESS_TOKEN: str | None = None
+
+    # MongoDB database
+    MONGO_INITDB_ROOT_USERNAME: str
+    MONGO_INITDB_ROOT_PASSWORD: str
+
+    DATABASE_HOST: str = "mongodb://llm_twin:llm_twin@127.0.0.1:27017"
+    DATABASE_NAME: str = "llm_twin"
 
     @classmethod
     def load_settings(cls) -> "Settings":
