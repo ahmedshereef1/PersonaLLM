@@ -1,3 +1,3 @@
-from . import base, exceptions
+from . import base, exceptions, documents
 
-__all__ = ["base", "exceptions"]
+__all__ = ["base", "exceptions", "documents"]

@@ -19,6 +19,7 @@ class UserDocument(NoSQLBaseDocument):
         return f"{self.first_name} {self.last_name}"
 
 
+# Custom article
 class Document(NoSQLBaseDocument, ABC):
     content: dict
     platform: str
@@ -26,6 +27,7 @@ class Document(NoSQLBaseDocument, ABC):
     author_user_name: str = Field(alias="author_user_name")
 
 
+# Github
 class RepositoryDocument(Document):
     name: str
     link: str
@@ -34,6 +36,7 @@ class RepositoryDocument(Document):
         name = DataCategory.REPOSITORIES
 
 
+# LinkedIn
 class PostDocument(Document):
     image: Optional[str] = None
     link: str | None = None
@@ -42,6 +45,7 @@ class PostDocument(Document):
         name = DataCategory.POSTS
 
 
+# Medium
 class ArticleDocument(Document):
     link: str
 

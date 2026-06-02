@@ -18,6 +18,7 @@ dependencies = [
     "chromedriver-autoinstaller>=0.6.4",
     "langchain-community>=0.4.2",
     "pymongo>=4.17.0",
+    "beautifulsoup4>=4.14.3",
 ]
 
 [build-system]
