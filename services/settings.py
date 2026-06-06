@@ -23,12 +23,24 @@ class Settings(BaseSettings):
     MONGO_INITDB_ROOT_USERNAME: str
     MONGO_INITDB_ROOT_PASSWORD: str
 
-    DATABASE_HOST: str = "mongodb://llm_twin:llm_twin@127.0.0.1:27017"
-    DATABASE_NAME: str = "llm_twin"
+    DATABASE_HOST: str
+    DATABASE_NAME: str
 
     # LinkedIn Credentials
     LINKEDIN_USERNAME: str | None = None
     LINKEDIN_PASSWORD: str | None = None
+
+    # RAG
+    TEXT_EMBEDDING_MODEL_ID: str
+    RERANKING_CROSS_ENCODER_MODEL_ID: str
+    RAG_MODEL_DEVICE: str
+
+    # Vector DB (Qdrant)
+    USE_QDRANT_CLOUD: bool
+    QDRANT_DATABASE_HOST: str
+    QDRANT_DATABASE_PORT: int
+    QDRANT_CLOUD_URL: str
+    QDRANT_APIKEY: str
 
     # UV
     UV_LINK_MODE: str = "copy"
