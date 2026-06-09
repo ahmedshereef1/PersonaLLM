@@ -8,7 +8,7 @@ from .base import VectorBaseDocument
 
 
 class CleanedDocument(VectorBaseDocument, ABC):
-    content: dict
+    content: str
     platform: str
     author_id: UUID4
     author_user_name: str
