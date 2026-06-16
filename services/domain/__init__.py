@@ -6,6 +6,7 @@ from . import (
     chunks,
     embedded_chunks,
     queries,
+    dataset,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "chunks",
     "embedded_chunks",
     "queries",
+    "dataset",
 ]
