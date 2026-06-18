@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     OPENAI_MODEL_ID: str = "gpt-4o-mini"
     OPENAI_API_BASE: str = "https://api.goose.ai/v1/engines/gpt-j-6b"
 
+    MODEL_MAX_TOKEN_WINDOW: int = 128_000
+
     # Calude API
     CLAUDE_API_KEY: str | None = None
     CLAUDE_MODEL_ID: str = "claude-sonnet-4-6"
