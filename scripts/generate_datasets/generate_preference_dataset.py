@@ -12,7 +12,7 @@ from services.application.dataset import generation
 @step
 def generate_preference_dataset(
     prompts: Annotated[
-        dict[DataCategory], list[GenerateDatasetSamplesPrompt], "prompts"
+        dict[DataCategory, list[GenerateDatasetSamplesPrompt]], "prompts"
     ],
     test_split_size: Annotated[float, "test_split_size"],
     mock: Annotated[bool, "mock_generation"] = False,

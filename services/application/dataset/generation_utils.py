@@ -54,7 +54,7 @@ def filter_short_answers(
     data: dict[DataCategory, PerferenceDataset], min_length: int = 100
 ) -> dict[DataCategory, PerferenceDataset]:
     def is_long_enough(example: PerferenceDatasetSample) -> bool:
-        return len(example) >= min_length
+        return len(example.chosen) >= min_length and len(example.rejected) >= min_length
 
     filtered_data = {}
     for category, dataset in data.items():

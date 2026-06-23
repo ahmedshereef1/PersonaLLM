@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: str | None = None
     GEMINI_MODEL: str = "gemini-2.5-flash"
 
+    #  Claude API (antigravity)
+    CLAUDE_API_KEY_ANTI: str | None = None
+
     # HuggingFace
     HUGGINGFACE_ACCESS_TOKEN: str | None = None
 

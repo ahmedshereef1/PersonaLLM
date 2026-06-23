@@ -1,16 +1,21 @@
 from abc import ABC, abstractmethod
 
 import tiktoken
-from anthropic import Anthropic
+
+# from anthropic import Anthropic
 from loguru import logger
-from langchain_core.exceptions import OutputParserException
+
+# from langchain_core.exceptions import OutputParserException
 from langchain_core.language_models.fake import FakeListLLM
 from langchain_core.messages import BaseMessage, HumanMessage, SystemMessage
 from langchain_core.prompts import PromptTemplate
+from langchain_core.runnables import RunnableConfig
+from openai import APIConnectionError
 
 # from langchain_anthropic import ChatAnthropic
 # from langchain_groq import ChatGroq
-from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_openai import ChatOpenAI
 
 from services import domain
 from services.domain.dataset import DatasetType, TrainTestSplit
@@ -23,7 +28,7 @@ from services.application.utils import misc
 from .output_parsers import ListPydanticOutputParser
 from services.settings import settings
 
-client = Anthropic(api_key=settings.CLAUDE_API_KEY)
+# client = Anthropic(api_key=settings.CLAUDE_API_KEY)
 
 
 class DatasetGenerator(ABC):
@@ -131,11 +136,12 @@ Provide your response in JSON format.
                 responses=[constants.get_mocked_response(cls.dataset_type)]
             )
         else:
-            llm = ChatGoogleGenerativeAI(
-                model_name=settings.GEMINI_MODEL,
-                api_key=settings.GOOGLE_API_KEY,
+            llm = ChatOpenAI(
+                model=settings.CLAUDE_MODEL_ID,
+                api_key=settings.CLAUDE_API_KEY_ANTI,
+                base_url="http://127.0.0.1:8045/v1",
                 max_tokens=2000 if cls.dataset_type == DatasetType.PREFERENCE else 1200,
-                temperature=0.7,
+                temperature=0.2,
             )
         parser = ListPydanticOutputParser(
             pydantic_object=cls._get_dataset_sample_type()
@@ -145,25 +151,40 @@ Provide your response in JSON format.
 
         datasets = {}
         for category, category_prompts in prompts.items():
+            print(category, len(category_prompts))
             langchain_category_prompts = [
                 _to_langchain(prompt) for prompt in category_prompts
             ]
-            batches = misc.batch(langchain_category_prompts, size=24)
+            batches = misc.batch(langchain_category_prompts, size=15)
 
             flattened_instruct_dataset_samples = []
             for batch in batches:
                 try:
-                    batched_dataset_sample = chain.batch(batch, stop=None)
+                    config = RunnableConfig(max_concurrency=1)
+                    batched_dataset_sample = chain.batch(
+                        batch,
+                        config=config,
+                        stop=None,
+                    )
 
                     for instruct_dataset_sample_batch in batched_dataset_sample:
+                        if not instruct_dataset_sample_batch:
+                            logger.warning("Received empty batch")
+                            continue
+
+                        logger.info(
+                            f"Received {len(instruct_dataset_sample_batch)} samples"
+                        )
+
                         flattened_instruct_dataset_samples.extend(
                             instruct_dataset_sample_batch
                         )
-                except OutputParserException:
-                    logger.exception(
-                        "Failed to parse the output JSON for a batch for category {category}"
-                    )
-
+                except APIConnectionError as e:
+                    logger.error(f"Connection error for category {category}: {e}")
+                    continue
+                except Exception as e:
+                    logger.exception(f"Failed batch for category {category}: {e}")
+                    continue
             dataset = domain.dataset.build_dataset(
                 dataset_type=cls.dataset_type,
                 category=category,
@@ -274,6 +295,7 @@ Extract:
 {{extract}}
 """
 
+    @classmethod
     def post_process_datasets(
         cls,
         datasets: dict[DataCategory, domain.dataset.PerferenceDataset],
