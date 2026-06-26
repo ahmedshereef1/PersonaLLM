@@ -63,6 +63,14 @@ class Settings(BaseSettings):
     RAG_MODEL_DEVICE: str = "cpu"
 
     # Comet ML
+    COMET_API_KEY: str
+    COMET_PROJECT: str
+
+    # AWS Authentication
+    AWS_REGION: str = "eu-central-1"
+    AWS_ACCESS_KEY: str | None = None
+    AWS_SECRET_KEY: str | None = None
+    AWS_ARN_ROLE: str | None = None
 
     # UV
     UV_LINK_MODE: str = "copy"
