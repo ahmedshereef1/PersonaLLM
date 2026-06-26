@@ -1,5 +1,6 @@
 import argparse
-import os
+
+# import os
 from pathlib import Path
 from typing import Any, List, Literal, Optional
 
@@ -300,12 +301,11 @@ if __name__ == "__main__":
         help="Parameter to choose the finetuning stage.",
     )
 
-    parser.add_argument(
-        "--output_data_dir", type=str, default=os.environ["SM_OUTPUT_DATA_DIR"]
-    )
-    parser.add_argument("--model_dir", type=str, default=os.environ["SM_MODEL_DIR"])
-    parser.add_argument("--n_gpus", type=str, default=os.environ["SM_NUM_GPUS"])
+    parser.add_argument("--output_data_dir", type=str, default="outputs")
 
+    parser.add_argument("--model_dir", type=str, default="outputs")
+
+    parser.add_argument("--n_gpus", type=str, default="1")
     args = parser.parse_args()
 
     print(f"Num training epochs: '{args.num_train_epochs}'")
