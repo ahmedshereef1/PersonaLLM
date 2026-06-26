@@ -161,6 +161,7 @@ def finetune(
                 output_dir=output_dir,
                 report_to="comet_ml",
                 seed=0,
+                save_strategy="no",
             ),
         )
     elif finetuning_type == "dpo":
@@ -249,7 +250,7 @@ def save_model(
     model: Any,
     tokenizer: Any,
     output_dir: str,
-    push_to_hub: bool = False,
+    push_to_hub: bool = True,
     repo_id: Optional[str] = None,
 ):
     model.save_pretrained_merged(output_dir, tokenizer, save_method="merged_16bit")
