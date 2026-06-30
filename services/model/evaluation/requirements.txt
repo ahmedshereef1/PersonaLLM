@@ -1,0 +1,12 @@
+transformers==4.46.3
+accelerate>=0.26.0
+tokenizers==0.20.3
+sentencepiece==0.2.0
+datasets==2.20.0
+vllm==0.6.1.post2
+tqdm==4.66.4
+openai==1.55.3
+pydantic-settings==2.14.1
+loguru==0.7.3
+huggingface_hub==0.34.4
+zenml[local]==0.94.3

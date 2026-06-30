@@ -30,9 +30,14 @@ class Settings(BaseSettings):
 
     #  Claude API (antigravity)
     CLAUDE_API_KEY_ANTI: str | None = None
+    CLAUDE_BASE_URL: str
 
     # HuggingFace
     HUGGINGFACE_ACCESS_TOKEN: str | None = None
+    DATASET_HUGGINGFACE_WORKSPACE: str
+    MODEL_HUGGINGFACE_WORKSPACE: str
+    IS_DUMMY: bool
+    BASE_TOKENIZER_ID: str = "unsloth/Llama-3.1-8B"
 
     # MongoDB database
     MONGO_INITDB_ROOT_USERNAME: str
@@ -117,3 +122,9 @@ class Settings(BaseSettings):
 
 
 settings = Settings.load_settings()
+
+
+def __getattr__(name: str):
+    if name.isupper() and hasattr(settings, name):
+        return getattr(settings, name)
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")

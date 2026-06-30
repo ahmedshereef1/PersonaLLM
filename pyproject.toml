@@ -55,6 +55,7 @@ dependencies = [
     "langchain-google-genai>=4.2.5",
     "aws>=0.2.5",
     "sagemaker>=2.0,<3.0",
+    "modal>=1.5.1",
 ]
 
 [build-system]
