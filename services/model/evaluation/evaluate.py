@@ -3,6 +3,7 @@ import gc
 import json
 import os
 import traceback
+import time
 
 from datasets import Dataset, load_dataset
 from huggingface_hub import HfApi
@@ -11,6 +12,9 @@ from openai import OpenAI
 from tqdm.auto import tqdm
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
+from huggingface_hub import hf_hub_download
+import pyarrow.parquet as pq
 
 CLAUDE_API_KEY_ANTI = os.environ["CLAUDE_API_KEY_ANTI"]
 CLAUDE_BASE_URL = os.environ.get("CLAUDE_BASE_URL", "http://127.0.0.1:8045/v1")
@@ -32,15 +36,15 @@ def _parse_bool(value: str | bool) -> bool:
 def _load_results_dataset(model_id: str):
     repo_id = f"{DATASET_HUGGINGFACE_WORKSPACE}/{model_id.split('/')[-1]}-results"
 
-    for split_name in ("train", "all", None):
-        try:
-            if split_name is None:
-                return load_dataset(repo_id)
-            return load_dataset(repo_id, split=split_name)
-        except Exception:
-            continue
+    parquet_path = hf_hub_download(
+        repo_id=repo_id,
+        repo_type="dataset",
+        filename="data/test-00000-of-00001.parquet",
+        token=HUGGINGFACE_ACCESS_TOKEN,
+    )
 
-    raise ValueError(f"Could not load dataset '{repo_id}' with any supported split.")
+    table = pq.read_table(parquet_path)
+    return Dataset(table)
 
 
 IS_DUMMY = _parse_bool(os.environ.get("IS_DUMMY", False))
@@ -159,15 +163,36 @@ Provide your evaluation in JSON format with the following structure:
                 "role": "system",
                 "content": "You are a helpful assistant who evaluates answers based on accuracy and style. Provide your response in JSON format with a short analysis and score for each criterion.",
             },
-            {"role": "user", "content": prompt},
+            {
+                "role": "user",
+                "content": prompt,
+            },
         ],
-        response_format={"type": "json_object"},
         max_tokens=1000,
-        temperature=0.9,
+        temperature=0,
     )
 
-    # Parse the structured output
-    return json.loads(completion.choices[0].message.content)
+    content = completion.choices[0].message.content
+
+    if isinstance(content, list):
+        content = "".join(block.text for block in content if hasattr(block, "text"))
+
+    content = content.strip()
+
+    # Remove markdown fences (```json ... ```)
+    if content.startswith("```"):
+        lines = content.splitlines()
+
+        # remove first line (```json or ```)
+        lines = lines[1:]
+
+        # remove last ```
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+
+        content = "\n".join(lines).strip()
+
+    return json.loads(content)
 
 
 def evaluate_batch(batch, start_index):
@@ -246,8 +271,21 @@ def evaluate_answers(
         dataset = dataset.remove_columns(["style"])
     dataset = dataset.add_column("style", style_scores)
 
+    repo_id = f"{DATASET_HUGGINGFACE_WORKSPACE}/{model_id.split('/')[-1]}-results"
+
+    api = HfApi(token=HUGGINGFACE_ACCESS_TOKEN)
+
+    # Delete the old repository if it exists
+    try:
+        api.delete_repo(repo_id=repo_id, repo_type="dataset")
+        print(f"Deleted {repo_id}, waiting for deletion to complete...")
+        time.sleep(10)  # wait 10 seconds
+    except Exception:
+        pass
+
+    # Upload the new dataset
     dataset.push_to_hub(
-        f"{DATASET_HUGGINGFACE_WORKSPACE}/{model_id.split('/')[-1]}-results",
+        repo_id,
         token=HUGGINGFACE_ACCESS_TOKEN,
     )
 
