@@ -1,3 +1,5 @@
 {
+    "python.defaultInterpreterPath": "${workspaceFolder}\\llm-twin\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
     "folder-color.pathColors": []
 }

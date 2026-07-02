@@ -7,7 +7,7 @@ from pydantic import BaseModel, UUID4, Field
 from loguru import logger
 import numpy as np
 
-from qdrant_client.models import Record, CollectionInfo, PointStruct
+from qdrant_client.models import ScoredPoint, CollectionInfo, PointStruct
 from qdrant_client.http import exceptions
 from qdrant_client.http.models import Distance, VectorParams
 
@@ -33,7 +33,7 @@ class VectorBaseDocument(BaseModel, Generic[T], ABC):
 
     # Define the Data Mapper pattern (from_record, to_point)
     @classmethod
-    def from_record(cls: Type[T], point: Record) -> T:  # Qdrant → Python object
+    def from_record(cls: Type[T], point: ScoredPoint) -> T:  # Qdrant → Python object
         _id = UUID(point.id, version=4)
         paylod = point.payload or {}
 
@@ -42,7 +42,7 @@ class VectorBaseDocument(BaseModel, Generic[T], ABC):
             **paylod,
         }
         if cls._has_class_attribute("embedding"):
-            attributes["embedding"] = point.vector() or None
+            attributes["embedding"] = getattr(point, "vector", None)
 
         return cls(**attributes)
 
@@ -158,17 +158,17 @@ class VectorBaseDocument(BaseModel, Generic[T], ABC):
     @classmethod
     def _search(cls: Type[T], limit: int = 10, query_vector=list, **kwargs) -> list[T]:
         collection_name = cls.get_collection_name()
-        records = connection.search(
+        records = connection.query_points(
             collection_name=collection_name,
-            query_vector=query_vector,
+            query=query_vector,
             limit=limit,
             with_payload=kwargs.pop("with_payload", True),
             with_vectors=kwargs.pop("with_vectors", False),
+            query_filter=kwargs.pop("query_filter", None),
             **kwargs,
         )
 
-        documents = [cls.from_record(record) for record in records]
-
+        documents = [cls.from_record(point) for point in records.points]
         return documents
 
     @classmethod

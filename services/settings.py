@@ -70,6 +70,7 @@ class Settings(BaseSettings):
     # Comet ML
     COMET_API_KEY: str
     COMET_PROJECT: str
+    COMET_WORKSPACE: str
 
     # AWS Authentication
     AWS_REGION: str = "eu-central-1"

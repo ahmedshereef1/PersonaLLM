@@ -128,7 +128,7 @@ class CrossEncoderModelSingleton(metaclass=SingletonMeta):
 
         self._model = CrossEncoder(
             model_name=self.embedding_model_id,
-            device=self._device,
+            device=self.device,
         )
         self._model.model.eval()
 
