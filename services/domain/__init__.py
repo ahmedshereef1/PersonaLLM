@@ -7,6 +7,7 @@ from . import (
     embedded_chunks,
     queries,
     dataset,
+    inference,
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "embedded_chunks",
     "queries",
     "dataset",
+    "inference",
 ]

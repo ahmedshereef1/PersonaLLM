@@ -78,6 +78,23 @@ class Settings(BaseSettings):
     AWS_SECRET_KEY: str | None = None
     AWS_ARN_ROLE: str | None = None
 
+    # AWS Sagemaker
+    HF_MODEL_ID: str = "AhmedSherif22/TwinLlama-3.1-8B-DPO"
+    GPU_INSTANCE_TYPE: str = "ml.g5.2xlarge"
+    SM_NUM_GPUS: int = 1
+    MAX_INPUT_LENGTH: int = 2048
+    MAX_TOTAL_TOKENS: int = 4096
+    MAX_BATCH_TOTAL_TOKENS: int = 4096
+    COPIES: int = 1  # Number of replicas
+    GPUS: int = 1  # Number of GPUs
+    CPUS: int = 2  # Number of CPU cores
+
+    SAGEMAKER_ENDPOINT_CONFIG_INFERENCE: str = "PersonalTwin"
+    SAGEMAKER_ENDPOINT_INFERENCE: str = "PersonalTwin"
+    TEMPERATURE_INFERENCE: float = 0.01
+    TOP_P_INFERENCE: float = 0.9
+    MAX_NEW_TOKENS_INFERENCE: int = 512
+
     # UV
     UV_LINK_MODE: str = "copy"
 
