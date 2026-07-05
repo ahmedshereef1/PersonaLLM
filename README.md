@@ -6,6 +6,8 @@
 [![Hugging Face](https://img.shields.io/badge/🤗%20Hugging%20Face-Models-yellow)](https://huggingface.co/AhmedSherif22)
 [![ZenML](https://img.shields.io/badge/Orchestration-ZenML-purple)](https://zenml.io/)
 [![Comet ML](https://img.shields.io/badge/Comet-ML%20Tracking-orange?logo=comet)](https://www.comet.com/)
+[![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![AWS SageMaker](https://img.shields.io/badge/Deployment-AWS%20SageMaker-FF9900?logo=amazonwebservices&logoColor=white)](https://aws.amazon.com/sagemaker/)
 [![Build](https://img.shields.io/badge/Build-passing-brightgreen)](#)
 
 ---
@@ -91,7 +93,31 @@ The processed data is used to fine-tune `meta-llama/Llama-3.1-8B-Instruct` in tw
 
 ### Stage 4 — Serving
 
-The fine-tuned model is deployed to a SageMaker (or compatible) inference endpoint. Incoming queries are augmented with retrieved context from the vector DB before being passed to the model.
+The fine-tuned model is deployed to an **AWS SageMaker** real-time inference endpoint. A **FastAPI** business microservice wraps the SageMaker endpoint, exposing a `/rag` REST API that retrieves context from the vector DB and passes it to the model before generation. All inference calls are traced end-to-end with **Opik**.
+
+#### SageMaker Endpoint
+
+The model is deployed and tested on a SageMaker real-time endpoint:
+
+<img src="data/images/sagemaker_endpoint.png" width="700" alt="SageMaker Inference Endpoint"/>
+
+#### FastAPI Business Microservice
+
+A FastAPI service exposes the RAG pipeline as a REST API:
+
+```bash
+uv run --active uvicorn services.infrastructure.aws.inference_pipeline_api:app
+```
+
+**Endpoint:** `POST /rag` — accepts a `query` string and returns an `answer` grounded in your personal content.
+
+<img src="data/images/fastapi_endpoint.png" width="700" alt="FastAPI RAG Endpoint"/>
+
+#### Opik Inference Tracing
+
+Every request through the FastAPI service is automatically traced in Opik, capturing spans for RAG retrieval and SageMaker generation:
+
+<img src="data/images/opik_inference_api_endpoint.png" width="700" alt="Opik Inference API Endpoint Tracing"/>
 
 ---
 
@@ -355,16 +381,5 @@ uv run pytest tests/<module_name>.py -v
 ```
 
 > **Placeholder:** Add documentation for any required environment setup or test fixtures here.
-
----
-
-## Roadmap
-
-- [ ] Support additional data sources (Notion, Substack, Twitter/X)
-- [ ] Multi-user support — manage writing twins for multiple authors
-- [ ] Automated evaluation pipeline triggered on each training run
-- [ ] Streaming inference API
-- [ ] Web UI for interacting with the writing twin
-- [ ] RLHF loop — collect feedback from served model outputs to improve future fine-tuning rounds
 
 ---
