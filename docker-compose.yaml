@@ -1,4 +1,19 @@
 services:
+  postgres:
+    image: postgres:16
+    container_name: "llm_twin_postgres"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-llm_twin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-llm_twin_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-llm_twin_db}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - local
+    restart: always
+
   mongo:
     image: mongo:latest
     container_name: "database_llm_twin"
@@ -35,6 +50,7 @@ services:
 volumes:
   mongo_data:
   qdrant_data:
+  postgres_data:
 
 networks:
   local:

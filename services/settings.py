@@ -46,6 +46,15 @@ class Settings(BaseSettings):
     DATABASE_HOST: str
     DATABASE_NAME: str
 
+    # PostgreSQL database
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_DB: str
+    POSTGRES_DSN: str
+
+    # JWT Auth
+    JWT_SECRET: str
+
     # LinkedIn Credentials
     LINKEDIN_USERNAME: str | None = None
     LINKEDIN_PASSWORD: str | None = None
