@@ -319,6 +319,24 @@ Configure Opik tracing via the relevant keys in your `.env` file (see `.env.exam
 
 ---
 
+## Frontend
+
+The project includes a web frontend for interacting with your writing twin.
+
+**Login:**
+
+<img src="data/images/login.png" width="700" alt="Login Page"/>
+
+**Dashboard:**
+
+<img src="data/images/dashboard.png" width="700" alt="Dashboard"/>
+
+**Chat:**
+
+<img src="data/images/chat_frontend.png" width="700" alt="Chat Interface"/>
+
+---
+
 ## Usage Examples
 
 Once the inference endpoint is running, query your writing twin:
