@@ -1,0 +1,127 @@
+/* ── OkyAi Design System ── */
+@font-face { font-family:'Satoshi'; src:url('/fonts/Satoshi-Light.otf') format('opentype'); font-weight:300; }
+@font-face { font-family:'Satoshi'; src:url('/fonts/Satoshi-Regular.otf') format('opentype'); font-weight:400; }
+@font-face { font-family:'Satoshi'; src:url('/fonts/Satoshi-Medium.otf') format('opentype'); font-weight:500; }
+@font-face { font-family:'Satoshi'; src:url('/fonts/Satoshi-Bold.otf') format('opentype'); font-weight:700; }
+@font-face { font-family:'Satoshi'; src:url('/fonts/Satoshi-Black.otf') format('opentype'); font-weight:900; }
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --radius: 10px;
+  --background:       oklch(13.558% .02475 282.596);
+  --foreground:       oklch(98.4% .003 247.858);
+  --card:             oklch(100% .00011 271.152 / .06);
+  --card-foreground:  oklch(98.4% .003 247.858);
+  --primary:          oklch(58% .26 286.82);
+  --primary-purple:   #7c3aed;
+  --primary-600:      #6d28d9;
+  --secondary:        oklch(27.9% .041 260.031);
+  --muted:            oklch(27.9% .041 260.031);
+  --muted-foreground: oklch(70.4% .04 256.788);
+  --border:           oklch(100% .00011 271.152 / .12);
+  --input:            oklch(100% .00011 271.152 / .06);
+  --sidebar:          oklch(20.8% .042 265.755);
+  --sidebar-primary:  oklch(60.779% .2717 319.782);
+  --destructive:      oklch(70.4% .191 22.216);
+  --purple-glow:      #7126dd;
+  --spacing: .28rem;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: 'Satoshi', ui-sans-serif, system-ui, sans-serif;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image: url('/saas-bg.png');
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: rgba(30,41,59,.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(113,38,221,.5); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(113,38,221,.7); }
+
+/* Glass card */
+.glass {
+  background: var(--card);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius);
+}
+
+/* Gradient button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: .65rem 1.5rem;
+  border-radius: var(--radius);
+  background: linear-gradient(to right, var(--primary-purple), var(--primary-600));
+  color: #fff;
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all .2s ease;
+  text-decoration: none;
+}
+.btn-primary:hover { filter: brightness(1.1); box-shadow: 0 4px 20px rgba(113,38,221,.4); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; transform: none; filter: none; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: .65rem 1.5rem;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: .9rem;
+  font-weight: 500;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all .2s ease;
+  text-decoration: none;
+}
+.btn-ghost:hover { background: rgba(255,255,255,.06); border-color: rgba(113,38,221,.4); }
+
+/* Input field */
+.input {
+  width: 100%;
+  padding: .65rem 1rem .65rem 2.8rem;
+  border-radius: var(--radius);
+  background: var(--input);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: .9rem;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input::placeholder { color: rgba(255,255,255,.3); }
+.input:focus { border-color: rgba(113,38,221,.5); box-shadow: 0 0 0 2px rgba(113,38,221,.15); }
+
+.input-wrap { position: relative; }
+.input-wrap .input-icon {
+  position: absolute;
+  left: .85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted-foreground);
+  pointer-events: none;
+  display: flex;
+}
